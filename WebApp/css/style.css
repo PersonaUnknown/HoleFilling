@@ -1,0 +1,23 @@
+#glcanvas{
+    width: 400px;
+    height: 400px;
+}
+
+#glcanvas3d {
+    width: 400px;
+    height: 400px;
+}
+
+#glcanvas3d-interactive {
+    width: 400px;
+    height: 400px;
+}
+
+#bunny-holes {
+    width: 400px;
+    height: 400px;
+}
+
+#demo-div {
+    display: flex;
+}
