@@ -18,6 +18,10 @@ async function importOFFFile(fileName)
     // var numFaces = +details[1];
     // var numEdges = +details[2];
     
+	var r = 0.5
+	var g = 0.5
+	var b = 0.5
+
 	for (let i = 2; i < numVerts + 2; i++)
     {
         // Get current line
@@ -27,9 +31,9 @@ async function importOFFFile(fileName)
         verts.push(+currLine[0])
         verts.push(+currLine[1])
         verts.push(+currLine[2])
-        verts.push(0.5)         
-        verts.push(0.5)
-        verts.push(0.5)  
+        verts.push(r)         
+        verts.push(g)
+        verts.push(b)  
     }
 
     for (let i = numVerts + 2; i < lines.length; i++)
@@ -48,6 +52,9 @@ async function importOFFFile(fileName)
 
 /* === Display 3D object given its vertices and faces === */
 // Params: modelData -> [vertices, faces], canvasID -> draw onto right canvas element
+// CITATIONS:
+// https://youtu.be/3yLL9ADo-ko?si=oQMeBAtxl3wK-6yU                <-- Rotating 3D Cube
+// https://www.tutorialspoint.com/webgl/webgl_interactive_cube.htm <-- Interactive 3D Cube
 function draw3D(modelData, canvasID)
 {
 	// Set up GL Context
@@ -64,7 +71,7 @@ function draw3D(modelData, canvasID)
 	// Model Data
 	const vertices = modelData[0]
 	const faces = modelData[1] 
-	console.log(modelData)
+
 	// Create buffers
 	var vertexBuffer = gl.createBuffer()
 	gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer)
@@ -173,7 +180,6 @@ function draw3D(modelData, canvasID)
 	var matViewUniformLocation = gl.getUniformLocation(program, 'mView');
 	var matProjUniformLocation = gl.getUniformLocation(program, 'mProj');
 
-
 	// Set input change for sliders
 	var viewPos = [0, 0, 5.5]
 	var canvasDiv = document.getElementById(canvasID).parentElement
@@ -181,7 +187,8 @@ function draw3D(modelData, canvasID)
 	zSlider.oninput = function() {
 		viewPos[2] = zSlider.value
 		mat4.lookAt(viewMatrix, viewPos, [0, 0, 0], [0, 1, 0]);
-		gl.uniformMatrix4fv(matViewUniformLocation, gl.FALSE, viewMatrix);
+		console.log("hi")
+		// gl.uniformMatrix4fv(matViewUniformLocation, gl.FALSE, viewMatrix);
 	}
 
 	// Set up matrices values
@@ -202,25 +209,96 @@ function draw3D(modelData, canvasID)
 	// Main render loop
 	var identityMatrix = new Float32Array(16);
 	mat4.identity(identityMatrix);
-	var angle = 0;
-	var loop = function () {
-		angle = performance.now() / 1000 / 6 * 2 * Math.PI;
-		mat4.rotate(yRotationMatrix, identityMatrix, angle, [0, 1, 0]);
-		mat4.rotate(xRotationMatrix, identityMatrix, angle / 4, [1, 0, 0]);
-		mat4.mul(worldMatrix, yRotationMatrix, xRotationMatrix);
-		gl.uniformMatrix4fv(matWorldUniformLocation, gl.FALSE, worldMatrix);
+	
+	var amortization = 0.95;
+	var drag = false;
+	var old_x;
+	var old_y;
+	var dX = 0
+	var dY = 0;
+	var theta = 0
+	var phi = 0
 
-		gl.clearColor(0.8, 0.85, 0.8, 1.0);
-		gl.clear(gl.DEPTH_BUFFER_BIT | gl.COLOR_BUFFER_BIT);
-		gl.drawElements(gl.TRIANGLES, faces.length, gl.UNSIGNED_SHORT, 0);
-
-		requestAnimationFrame(loop);
+	var mouseDown = function(event) {
+		drag = true;
+		old_x = event.pageX
+		old_y = event.pageY;
+		event.preventDefault();
+		return false;
 	};
-	requestAnimationFrame(loop);
+
+	var mouseUp = function(event){
+		drag = false;
+	};
+
+	var mouseMove = function(event) {
+		if (!drag) 
+		{
+			return false;
+		}
+		dX = (event.pageX - old_x) * 2 * Math.PI / canvas.width,
+		dY = (event.pageY - old_y) * 2 * Math.PI / canvas.height;
+		theta += dX;
+		phi += dY;
+		old_x = event.pageX
+		old_y = event.pageY;
+		event.preventDefault();
+	};
+
+	canvas.addEventListener("mousedown", mouseDown, false);
+	canvas.addEventListener("mouseup", mouseUp, false);
+	canvas.addEventListener("mouseout", mouseUp, false);
+	canvas.addEventListener("mousemove", mouseMove, false);
+	
+	var animate = function(time) {
+		var dt = time-time_old;
+	 
+		if (!drag) {
+		   dX *= amortization
+		   dY *= amortization
+		   theta += dX
+		   phi += dY
+		}
+	 
+		mat4.rotate(yRotationMatrix, identityMatrix, theta, [0, 1, 0])
+		mat4.rotate(xRotationMatrix, identityMatrix, phi, [1, 0, 0])
+		mat4.mul(worldMatrix, yRotationMatrix, xRotationMatrix)
+		gl.uniformMatrix4fv(matProjUniformLocation, false, projMatrix);
+		gl.uniformMatrix4fv(matViewUniformLocation, false, viewMatrix);
+		gl.uniformMatrix4fv(matWorldUniformLocation, false, worldMatrix);
+
+		time_old = time; 
+		gl.enable(gl.DEPTH_TEST);
+
+		gl.clearColor(0.8, 0.85, 0.8, 1);
+		gl.clear(gl.DEPTH_BUFFER_BIT | gl.COLOR_BUFFER_BIT);
+	 
+		gl.drawElements(gl.TRIANGLES, faces.length, gl.UNSIGNED_SHORT, 0);
+	 
+		window.requestAnimationFrame(animate);
+	}
+	animate(0);
+
+	/* === IF WANTING TO USE LOOP ROTATION DISPLAY === */
+	// var angle = 0;
+	// var loop = function () {
+	// 	angle = performance.now() / 1000 / 6 * 2 * Math.PI;
+	// 	mat4.rotate(yRotationMatrix, identityMatrix, angle, [0, 1, 0]);
+	// 	mat4.rotate(xRotationMatrix, identityMatrix, angle / 4, [1, 0, 0]);
+	// 	mat4.mul(worldMatrix, yRotationMatrix, xRotationMatrix);
+	// 	gl.uniformMatrix4fv(matWorldUniformLocation, gl.FALSE, worldMatrix);
+
+	// 	gl.clearColor(0.8, 0.85, 0.8, 1.0);
+	// 	gl.clear(gl.DEPTH_BUFFER_BIT | gl.COLOR_BUFFER_BIT);
+	// 	gl.drawElements(gl.TRIANGLES, faces.length, gl.UNSIGNED_SHORT, 0);
+
+	// 	requestAnimationFrame(loop);
+	// };
+	// requestAnimationFrame(loop);
 }
 
 function demoDraw3D() {
-	importOFFFile("bunny_hole").then(function(data) {
+	importOFFFile("sphere100hole").then(function(data) {
 		draw3D(data, "sphere")
 	});
 }
