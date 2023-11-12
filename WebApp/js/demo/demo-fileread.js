@@ -1,6 +1,6 @@
-$('#demo-file').on('change', function() { 
+$('#fileInput').on('change', function() { 
     var fr = new FileReader(); 
-    fr.onload = function(){ 
+    fr.onload = function() { 
         var result = fr.result;
         var lines = result.split(/\r\n/)
         var verts = []
@@ -8,10 +8,9 @@ $('#demo-file').on('change', function() {
         
         var details = lines[1].split(" ")
         var numVerts = +details[0];
-        var numFaces = +details[1];
-        var numEdges = +details[2];
-        // console.log(numVerts + " " + numFaces);
-        
+        // var numFaces = +details[1];
+        // var numEdges = +details[2];
+    
         for (let i = 2; i < numVerts + 2; i++)
         {
             // Get current line
@@ -21,9 +20,9 @@ $('#demo-file').on('change', function() {
             verts.push(+currLine[0])
             verts.push(+currLine[1])
             verts.push(+currLine[2])
-            verts.push(1.0)         
-            verts.push(1.0)
-            verts.push(1.0)  
+            verts.push(0.5)         
+            verts.push(0.5)
+            verts.push(0.5)  
         }
 
         for (let i = numVerts + 2; i < lines.length; i++)
@@ -35,12 +34,9 @@ $('#demo-file').on('change', function() {
             faces.push(+currLine[1])
             faces.push(+currLine[2])
             faces.push(+currLine[3])
-        }
+        }   
 
-        console.log(verts)
-        console.log(faces)
-
-        draw3D("bunny-holes", verts, faces)
+        draw3D([verts, faces], "file-canvas")
     } 
     
     fr.readAsText(this.files[0]); 
