@@ -15,12 +15,6 @@ async function importOFFFile(fileName)
     
     var details = lines[1].split(" ")
     var numVerts = +details[0];
-    // var numFaces = +details[1];
-    // var numEdges = +details[2];
-    
-	var r = 0.5
-	var g = 0.5
-	var b = 0.5
 
 	for (let i = 2; i < numVerts + 2; i++)
     {
@@ -31,9 +25,9 @@ async function importOFFFile(fileName)
         verts.push(+currLine[0])
         verts.push(+currLine[1])
         verts.push(+currLine[2])
-        verts.push(r)         
-        verts.push(g)
-        verts.push(b)  
+        verts.push(Math.random())         
+        verts.push(Math.random())
+        verts.push(Math.random())  
     }
 
     for (let i = numVerts + 2; i < lines.length; i++)
@@ -128,9 +122,9 @@ function draw3D(modelData, canvasID)
 	gl.clearColor(1.0, 1.0, 1.0, 1.0);
 	gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 	gl.enable(gl.DEPTH_TEST);
-	gl.enable(gl.CULL_FACE);
+	// gl.enable(gl.CULL_FACE);
 	gl.frontFace(gl.CCW);
-	gl.cullFace(gl.BACK);
+	// gl.cullFace(gl.BACK);
 
 	// Program
 	var program = gl.createProgram();
