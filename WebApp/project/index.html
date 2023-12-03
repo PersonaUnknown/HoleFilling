@@ -7,13 +7,29 @@
         <link rel="stylesheet" href="../css/style.css">
     </head>
     <body>
-       
+       <!-- Canvas for Base Model (Nothing done to it)-->
+       <canvas id="base"></canvas>
+
+       <!-- Canvas for Initial Triangulation -->
+       <canvas id="tri"></canvas>
+
+       <!-- Canvas for Refinement -->
+       <canvas id="refine"></canvas>
+
+       <!-- Canvas for Fairing -->
+        <canvas id="fairing"></canvas>
+
         <!-- JS Libraries -->
+        <script src="../js/libraries/math.js"></script>
         <script src="../js/libraries/jquery.min.js"></script>
         <script src="../js/libraries/gl-matrix.js"></script>
         <script src="../js/libraries/gl-matrix-min.js"></script>
 
         <!-- JS External -->        
+        <script src="../js/project/helper.js"></script>
+        <script src="../js/project/drawMesh.js"></script>
+        <script src="../js/project/mesh.js"></script>
+        <script src="../js/project/triangulation.js"></script>
         <script src="../js/project/main.js"></script>
     </body>
 </html>
