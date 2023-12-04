@@ -171,11 +171,11 @@ class HoleMesh {
             {
                 // If not visited yet, find the vertices to one hole
                 var hole = [];
-                var entry = this.adjList[this.vertices[currVert]]
-                var connected = entry.adj;
+                var entry = this.adjList[this.vertices[currVert]].adj
                 var prev = currVert;
-                var curr = connected[1];
-                var end = connected[0];
+                var curr = entry[0];
+                var end = entry[1];
+                var connected = this.adjList[this.vertices[curr]].adj;
 
                 // Until you haven't reached the end, keep adding points to hole
                 while (connected[0] != end && connected[1] != end)
@@ -189,14 +189,14 @@ class HoleMesh {
                         prev = curr;
                         curr = connected[1];
                     }
-                    connected = this.adjList[curr].adj;
+                    connected = this.adjList[this.vertices[curr]].adj;
                 }
                 hole.push(this.vertices[prev]); hole.push(this.vertices[curr]); hole.push(this.vertices[end]);
                 visited[prev] = 1; visited[curr] = 1; visited[end] = 1;
                 holes.push(hole);
             }
         }
-        console.log(holes)
+
         return holes;
     }
 }

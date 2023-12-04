@@ -7,17 +7,58 @@
         <link rel="stylesheet" href="../css/style.css">
     </head>
     <body>
-       <!-- Canvas for Base Model (Nothing done to it)-->
-       <canvas id="base"></canvas>
+        <div id="wrapper">
+            <!-- Canvas for Base Model (Nothing done to it)-->
+            <div>
+                <h1> Original Mesh </h1>
+                <input type="file" id="fileInput">
+                <div class="slidecontainer">
+                    Camera Z Position:
+                    <input type="range" min="0.5" max="5.5" value="5.5" class="slider zRange">
+                </div>
+                <canvas id="base"></canvas>
+            </div>
 
-       <!-- Canvas for Initial Triangulation -->
-       <canvas id="tri"></canvas>
+            <!-- Canvas for Initial Triangulation -->
+            <div>
+                <h1> Min-Area Fill Triangulation </h1>
+                <input type="file" id="fileInput">
+                <div class="slidecontainer">
+                    Camera Z Position:
+                    <input type="range" min="0.5" max="5.5" value="5.5" class="slider zRange">
+                </div>
+                <canvas id="tri-area"></canvas>
+            </div>
+            <div>
+                <h1> Min-Area Fill Triangulation </h1>
+                <input type="file" id="fileInput">
+                <div class="slidecontainer">
+                    Camera Z Position:
+                    <input type="range" min="0.5" max="5.5" value="5.5" class="slider zRange">
+                </div>
+                <canvas id="tri-angle"></canvas>
+            </div>
 
-       <!-- Canvas for Refinement -->
-       <canvas id="refine"></canvas>
+            <div>
+                <h1> Refinement </h1>
+                <input type="file" id="fileInput">
+                <div class="slidecontainer">
+                    Camera Z Position:
+                    <input type="range" min="0.5" max="5.5" value="5.5" class="slider zRange">
+                </div>
+                <canvas id="refine"></canvas>
+            </div>
 
-       <!-- Canvas for Fairing -->
-        <canvas id="fairing"></canvas>
+            <div>
+                <h1> Fairing </h1>
+                <input type="file" id="fileInput">
+                <div class="slidecontainer">
+                    Camera Z Position:
+                    <input type="range" min="0.5" max="5.5" value="5.5" class="slider zRange">
+                </div>
+                <canvas id="fairing"></canvas>
+            </div>
+        </div>
 
         <!-- JS Libraries -->
         <script src="../js/libraries/math.js"></script>

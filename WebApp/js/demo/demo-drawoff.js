@@ -212,6 +212,7 @@ function draw3D(modelData, canvasID)
 	var dY = 0;
 	var theta = 0
 	var phi = 0
+	var time_old = 0;
 
 	var mouseDown = function(event) {
 		drag = true;
