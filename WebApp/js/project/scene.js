@@ -63,12 +63,13 @@ function addObject(scene, verts, faces, color = null, name = null) {
     const mesh = new THREE.Mesh(geometry, material);
     mesh.name = name == null ? "base-model" : name;
 
-    const edges = new THREE.EdgesGeometry( geometry ); 
-    const line = new THREE.LineSegments(edges, new THREE.LineBasicMaterial( { color: 0x000000 } ) ); 
-    line.name = name == null ? "base-outline" : name + "-outline";
-
+    if (name != "bunny") {
+        const edges = new THREE.EdgesGeometry( geometry ); 
+        const line = new THREE.LineSegments(edges, new THREE.LineBasicMaterial( { color: 0x000000 } ) ); 
+        line.name = name == null ? "base-outline" : name + "-outline";
+        scene.add(line);
+    }
     scene.add(mesh);
-    scene.add(line);
 }
 
 function addHoleOutline(scene, holes) {
@@ -203,6 +204,6 @@ function showBunny() {
     }
 
     // Start replacing the scene with new mesh
-    addObject(scene, BUNNY_BASE[0], BUNNY_BASE[1])
-    addObject(scene2, BUNNY_AREA[0], BUNNY_AREA[1], color=null, "area");
+    addObject(scene, BUNNY_BASE[0], BUNNY_BASE[1], color=null, "bunny")
+    addObject(scene2, BUNNY_AREA[0], BUNNY_AREA[1], color=null);
 }
