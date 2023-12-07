@@ -1,28 +1,37 @@
 // Init scene
 const scene = new THREE.Scene();
 const scene2 = new THREE.Scene();
+const scene3 = new THREE.Scene();
 // Camera
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
 const camera2 = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+const camera3 = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
 camera.position.z = 2;
 camera2.position.z = 2;
+camera3.position.z = 2;
 // Renderer
 const renderer = new THREE.WebGLRenderer();
 const renderer2 = new THREE.WebGLRenderer();
-scene.background = new THREE.Color( 0xffffff );
-scene2.background = new THREE.Color( 0xffffff );
+const renderer3 = new THREE.WebGLRenderer();
+scene.background = new THREE.Color(0xffffff);
+scene2.background = new THREE.Color(0xffffff);
+scene3.background = new THREE.Color(0xffffff);
 // Controls
 const controls = new THREE.OrbitControls(camera, renderer.domElement)
 const controls2 = new THREE.OrbitControls(camera2, renderer2.domElement)
+const controls3 = new THREE.OrbitControls(camera2, renderer3.domElement) 
 document.getElementById("hole").appendChild(renderer.domElement);
 document.getElementById("tri").appendChild(renderer2.domElement);
+document.getElementById("refine").appendChild(renderer3.domElement);
 
 window.addEventListener('resize', onWindowResize, false)
 function onWindowResize() {
     camera.aspect = window.innerWidth / window.innerHeight
     camera2.aspect = window.innerWidth / window.innerHeight
+    camera3.aspect = window.innerWidth / window.innerHeight
     camera.updateProjectionMatrix()
     camera2.updateProjectionMatrix()
+    camera3.updateProjectionMatrix()
     render()
 }
 
@@ -34,6 +43,7 @@ function animate() {
 function render() {
     renderer.render(scene, camera)
     renderer2.render(scene2, camera2)
+    renderer3.render(scene3, camera3);
 }
 
 animate()
@@ -93,24 +103,28 @@ function removeObject(scene, name) {
 function showObject(scene, name) {
     var selectedObject = scene.getObjectByName(name);
     var objEdges = scene.getObjectByName(name + "-outline");
-    selectedObject.visible = true;
+    if (selectedObject) { selectedObject.visible = true; }
     if (objEdges) {objEdges.visible = true;}
 }
 
 function hideObject(scene, name) {
     var selectedObject = scene.getObjectByName(name);
     var objEdges = scene.getObjectByName(name + "-outline");
-    selectedObject.visible = false;
+    if (selectedObject) { selectedObject.visible = false; }
     if (objEdges) {objEdges.visible = false;}
 }
 
 var outlineState = true;
 function toggleOutline() {
     if (outlineState) {
-        scene.getObjectByName("outline").visible = false;
+        if (scene.getObjectByName("outline") != null) {
+            scene.getObjectByName("outline").visible = false;
+        }
         outlineState = false;
     } else {
-        scene.getObjectByName("outline").visible = true;
+        if (scene.getObjectByName("outline") != null) {
+            scene.getObjectByName("outline").visible = true;   
+        }
         outlineState = true;
     }
 }
@@ -137,4 +151,58 @@ function toggleMethod() {
         showObject(scene2, "area")
         methodState = true;
     }
+}
+
+// Refresh scenes given new mesh
+function refresh(mesh) {
+    // Reset Bools
+    outlineState = true;
+    modelState = true;
+    methodState = true;
+
+    // Remove all objects
+    while(scene.children.length > 0){ 
+        scene.remove(scene.children[0]); 
+    }
+    while(scene2.children.length > 0){ 
+        scene2.remove(scene2.children[0]); 
+    }
+    while(scene3.children.length > 0){ 
+        scene3.remove(scene3.children[0]); 
+    }
+   
+    // Start replacing the scene with new mesh
+    var base = prepModelForScene(mesh.getMeshData());
+    var holes = mesh.getHoles();
+    var triArea = triangulate(mesh, "AREA");
+    var triAngle = triangulate(mesh, "ANGLE");
+    addObject(scene, base[0], base[1])
+    addHoleOutline(scene, holes)
+    var area = prepModelForScene(triArea[0]);
+    var angle = prepModelForScene(triAngle[0]);
+    addObject(scene2, area[0], area[1], color=null, "area");
+    addObject(scene2, angle[0], angle[1], color=null, "angle");
+    hideObject(scene2, "angle")
+}
+
+function showBunny() {
+    // Reset Bools
+    outlineState = true;
+    modelState = true;
+    methodState = true;
+
+    // Remove all objects
+    while(scene.children.length > 0){ 
+        scene.remove(scene.children[0]); 
+    }
+    while(scene2.children.length > 0){ 
+        scene2.remove(scene2.children[0]); 
+    }
+    while(scene3.children.length > 0){ 
+        scene3.remove(scene3.children[0]); 
+    }
+
+    // Start replacing the scene with new mesh
+    addObject(scene, BUNNY_BASE[0], BUNNY_BASE[1])
+    addObject(scene2, BUNNY_AREA[0], BUNNY_AREA[1], color=null, "area");
 }

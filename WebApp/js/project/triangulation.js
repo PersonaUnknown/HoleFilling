@@ -132,6 +132,7 @@ function triangulate(mesh, method) {
     var numHoles = mesh.getNumHoles();
     var adj = mesh.getAdjList();
     var start = Date.now();
+    var patches = new Array(numHoles);
     for (let l = 0; l < numHoles; l++)
     {
         // Init
@@ -212,9 +213,10 @@ function triangulate(mesh, method) {
             newTris[i] = [adj[hole[curr[0]]].index, adj[hole[curr[1]]].index, adj[hole[curr[2]]].index]
         }
         surface[1] = surface[1].concat(newTris);
+        patches[l] = newTris;
     }
 
     var end = Date.now();
     console.log((end - start) / 1000 + " seconds to finish");
-    return surface;
+    return [surface, patches];
 }

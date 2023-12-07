@@ -47,10 +47,10 @@ class HoleMesh {
             [this.vertices, this.faces] = data;
 
             // Identify hole boundaries
-            this.isolatedEdges = this.findIsolatedEdges();
-            this.isolatedVertices = this.findIsolatedVertices();
-            this.adjList = this.getAdjacencyList();
-            this.holes = this.findHoleBoundaries();
+            this.isolatedEdges = await this.findIsolatedEdges();
+            this.isolatedVertices = await this.findIsolatedVertices();
+            this.adjList = await this.getAdjacencyList();
+            this.holes = await this.findHoleBoundaries();
         })();
     }
 
@@ -100,7 +100,7 @@ class HoleMesh {
 
     // ====== STEP 1: FINDING HOLE ======
     // Given mesh surface, get all edges with isolated values
-    findIsolatedEdges() {
+    async findIsolatedEdges() {
         var dict = new Object()
         var edges = []
         var numFaces = this.faces.length;
@@ -134,13 +134,13 @@ class HoleMesh {
     }
 
     // Given isolated edges, all vertex indices should also be isolated and are an element of a hole
-    findIsolatedVertices() {
+    async findIsolatedVertices() {
         var isolatedVerts = new Set(this.isolatedEdges.flat())
         return [...isolatedVerts]
     }
 
     // Given mesh data, create an adjacency list for each isolated vertex plus their original index
-    getAdjacencyList() {
+    async getAdjacencyList() {
         var adjList = new Object();
         var numVerts = this.isolatedVertices.length;
         var numEdges = this.isolatedEdges.length;
@@ -167,7 +167,7 @@ class HoleMesh {
     }
 
     // Given mesh data, return list of holes (i.e. their vertices) sorted in order
-    findHoleBoundaries() {
+    async findHoleBoundaries() {
         var visited = new Object();
         var numVerts = this.isolatedVertices.length;
         var holes = [];
@@ -180,8 +180,8 @@ class HoleMesh {
                 var hole = [];
                 var entry = this.adjList[this.vertices[currVert]].adj
                 var prev = currVert;
-                var curr = entry[0];
-                var end = entry[1];
+                var curr = entry[1];
+                var end = entry[0];
                 var connected = this.adjList[this.vertices[curr]].adj;
 
                 // Until you haven't reached the end, keep adding points to hole

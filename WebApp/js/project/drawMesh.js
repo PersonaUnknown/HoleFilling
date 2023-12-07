@@ -6,11 +6,13 @@ const { vec2, vec3, mat3, mat4 } = glMatrix;
 $('#fileInput').on('change', function(event) {
     const file = event.target.files[0];
 	var fr = new FileReader(); 
-    fr.onload = function(e) 
+    fr.onload = async function(e) 
 	{ 
 		// Create 
         var result = fr.result;
 		var newMesh = new HoleMesh("", result);
+		await newMesh.promise;
+		refresh(newMesh)
 	}
 
 	fr.readAsText(file); 

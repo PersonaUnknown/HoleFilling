@@ -8,64 +8,28 @@
     </head>
     <body>
         <h1 id="header"> CSE 554 - Hole Filling</h1>
+        <div id = "upload"> 
+            Upload .OFF file to hole fill
+            <input type="file" id="fileInput"> </file>
+        </div>
+        <button onclick="toggleModel()"> Toggle Model </button>
+        <button onclick="toggleOutline()"> Toggle Hole </button>
+        <button onclick="toggleMethod()"> Toggle Method</button>
+        <button onclick="showBunny()"> Show Bunny </button>
         <div id="wrapper"> 
             <div id="hole">
-                <button onclick="toggleModel()"> Toggle Model </button>
-                <button onclick="toggleOutline()"> Toggle Hole </button>
+                Identify Hole
             </div>
             <div id="tri">
-                <button onclick="toggleMethod()"> Toggle Method</button>
+                Triangulation
+            </div>
+            <div id="refine">
+                Refinement
+            </div>
+            <div id = "fair"> 
+                Fairing
             </div>
         </div>
-
-        <!-- <input type="file" id="fileInput"> -->
-        <!-- <div id="wrapper"> -->
-            <!-- Canvas for Base Model (Nothing done to it)-->
-            <!-- <div>
-                <h1> Original Mesh </h1>
-                <div class="slidecontainer">
-                    Camera Z Position:
-                    <input type="range" min="0.5" max="5.5" value="5.5" class="slider zRange">
-                </div>
-                <canvas id="base"></canvas>
-            </div> -->
-
-            <!-- Canvas for Initial Triangulation -->
-            <!-- <div>
-                <h1> Min-Area Fill Triangulation </h1>
-                <div class="slidecontainer">
-                    Camera Z Position:
-                    <input type="range" min="0.5" max="5.5" value="5.5" class="slider zRange">
-                </div>
-                <canvas id="tri-area"></canvas>
-            </div>
-            <div>
-                <h1> Min-Area Fill Triangulation </h1>
-                <div class="slidecontainer">
-                    Camera Z Position:
-                    <input type="range" min="0.5" max="5.5" value="5.5" class="slider zRange">
-                </div>
-                <canvas id="tri-angle"></canvas>
-            </div>
-
-            <div>
-                <h1> Refinement </h1>
-                <div class="slidecontainer">
-                    Camera Z Position:
-                    <input type="range" min="0.5" max="5.5" value="5.5" class="slider zRange">
-                </div>
-                <canvas id="refine"></canvas>
-            </div>
-
-            <div>
-                <h1> Fairing </h1>
-                <div class="slidecontainer">
-                    Camera Z Position:
-                    <input type="range" min="0.5" max="5.5" value="5.5" class="slider zRange">
-                </div>
-                <canvas id="fairing"></canvas>
-            </div>
-        </div> -->
 
         <!-- JS Libraries -->
         <script src="js/libraries/three.js"></script>
@@ -76,10 +40,12 @@
         <script src="js/libraries/gl-matrix-min.js"></script>
 
         <!-- JS External -->     
+        <script src="js/project/results.js"></script>
         <script src="js/project/scene.js"></script>
         <script src="js/project/helper.js"></script>
         <script src="js/project/drawMesh.js"></script>
         <script src="js/project/mesh.js"></script>
+        <script src="js/project/refine.js"></script>
         <script src="js/project/triangulation.js"></script>
         <script src="js/project/main.js"></script>
     </body>
