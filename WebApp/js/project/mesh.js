@@ -2,12 +2,13 @@
 // Constructor Params: OFF File to obtain initial mesh data
 // When fully initialized, the class object will have an array containing the holes
 class HoleMesh {
-    constructor(offFile) {
+    constructor(offFile, fileContents = null) {
         // Mesh Data
         this.fileName = offFile;
+        this.fileContents = fileContents;
         this.vertices = [];
         this.faces = [];
-        
+
         // Hole Boundary Loops
         this.isolatedEdges = [];
         this.isolatedVertices = [];
@@ -56,8 +57,14 @@ class HoleMesh {
     // Reads OFF File and creates surface in format of [list of vertices, list of faces]
     async readOffFile() {
         /* === Grab OFF file and convert to vertices and faces */
-        const response = await fetch("../data/" + this.fileName + ".off");
-        const text = await response.text();
+        var text = null;
+        if (this.fileContents == null) {
+            const response = await fetch("data/" + this.fileName + ".off");
+            text = await response.text();
+        } else {
+            text = this.fileContents;
+        }
+
         var lines = text.split(/\r\n/)
         var verts = []
         var edges = []

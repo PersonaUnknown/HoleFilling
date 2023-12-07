@@ -4,25 +4,35 @@
         <meta charset="UTF-8">
         <title> CSE 554 </title>
         <!-- CSS -->
-        <link rel="stylesheet" href="../css/style.css">
+        <link rel="stylesheet" href="css/style.css">
     </head>
     <body>
-        <div id="wrapper">
+        <h1 id="header"> CSE 554 - Hole Filling</h1>
+        <div id="wrapper"> 
+            <div id="hole">
+                <button onclick="toggleModel()"> Toggle Model </button>
+                <button onclick="toggleOutline()"> Toggle Hole </button>
+            </div>
+            <div id="tri">
+                <button onclick="toggleMethod()"> Toggle Method</button>
+            </div>
+        </div>
+
+        <!-- <input type="file" id="fileInput"> -->
+        <!-- <div id="wrapper"> -->
             <!-- Canvas for Base Model (Nothing done to it)-->
-            <div>
+            <!-- <div>
                 <h1> Original Mesh </h1>
-                <input type="file" id="fileInput">
                 <div class="slidecontainer">
                     Camera Z Position:
                     <input type="range" min="0.5" max="5.5" value="5.5" class="slider zRange">
                 </div>
                 <canvas id="base"></canvas>
-            </div>
+            </div> -->
 
             <!-- Canvas for Initial Triangulation -->
-            <div>
+            <!-- <div>
                 <h1> Min-Area Fill Triangulation </h1>
-                <input type="file" id="fileInput">
                 <div class="slidecontainer">
                     Camera Z Position:
                     <input type="range" min="0.5" max="5.5" value="5.5" class="slider zRange">
@@ -31,7 +41,6 @@
             </div>
             <div>
                 <h1> Min-Area Fill Triangulation </h1>
-                <input type="file" id="fileInput">
                 <div class="slidecontainer">
                     Camera Z Position:
                     <input type="range" min="0.5" max="5.5" value="5.5" class="slider zRange">
@@ -41,7 +50,6 @@
 
             <div>
                 <h1> Refinement </h1>
-                <input type="file" id="fileInput">
                 <div class="slidecontainer">
                     Camera Z Position:
                     <input type="range" min="0.5" max="5.5" value="5.5" class="slider zRange">
@@ -51,26 +59,28 @@
 
             <div>
                 <h1> Fairing </h1>
-                <input type="file" id="fileInput">
                 <div class="slidecontainer">
                     Camera Z Position:
                     <input type="range" min="0.5" max="5.5" value="5.5" class="slider zRange">
                 </div>
                 <canvas id="fairing"></canvas>
             </div>
-        </div>
+        </div> -->
 
         <!-- JS Libraries -->
-        <script src="../js/libraries/math.js"></script>
-        <script src="../js/libraries/jquery.min.js"></script>
-        <script src="../js/libraries/gl-matrix.js"></script>
-        <script src="../js/libraries/gl-matrix-min.js"></script>
+        <script src="js/libraries/three.js"></script>
+        <script src="js/libraries/OrbitControls.js"></script>
+        <script src="js/libraries/math.js"></script>
+        <script src="js/libraries/jquery.min.js"></script>
+        <script src="js/libraries/gl-matrix.js"></script>
+        <script src="js/libraries/gl-matrix-min.js"></script>
 
-        <!-- JS External -->        
-        <script src="../js/project/helper.js"></script>
-        <script src="../js/project/drawMesh.js"></script>
-        <script src="../js/project/mesh.js"></script>
-        <script src="../js/project/triangulation.js"></script>
-        <script src="../js/project/main.js"></script>
+        <!-- JS External -->     
+        <script src="js/project/scene.js"></script>
+        <script src="js/project/helper.js"></script>
+        <script src="js/project/drawMesh.js"></script>
+        <script src="js/project/mesh.js"></script>
+        <script src="js/project/triangulation.js"></script>
+        <script src="js/project/main.js"></script>
     </body>
 </html>

@@ -2,6 +2,42 @@
 // CITATION: https://stackoverflow.com/questions/66147508/gl-matrix-is-not-included-properly-in-webgl-application
 const { vec2, vec3, mat3, mat4 } = glMatrix;
 
+// File Input Support
+$('#fileInput').on('change', function(event) {
+    const file = event.target.files[0];
+	var fr = new FileReader(); 
+    fr.onload = function(e) 
+	{ 
+		// Create 
+        var result = fr.result;
+		var newMesh = new HoleMesh("", result);
+	}
+
+	fr.readAsText(file); 
+}) 
+
+/* === Given mesh data, prepare it for being displayed using Three.js === */
+function prepModelForScene(meshData) {
+    vertices = meshData[0];
+    faces = meshData[1];
+
+    newVerts = [];
+    for (let i = 0; i < vertices.length; i++) {
+        newVerts.push(vertices[i][0])
+        newVerts.push(vertices[i][1])
+        newVerts.push(vertices[i][2])
+    }
+
+    newFaces = [];
+    for (let i = 0; i < faces.length; i++) {
+        newFaces.push(faces[i][0])
+        newFaces.push(faces[i][1])
+        newFaces.push(faces[i][2])
+    }
+
+    return [newVerts, newFaces];
+}
+
 /* === Given mesh data, prepare it for being displayed on WebGL === */
 function prepModel3D(meshData) {
     vertices = meshData[0];
@@ -44,6 +80,12 @@ function draw3D(modelData, canvasID)
 	if (gl === null) {
 		console.log("Browser does not support WebGL")
 	}
+
+	// Setup canvas
+	gl.clearColor(1.0, 1.0, 1.0, 1.0);
+	gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+	gl.enable(gl.DEPTH_TEST);
+	gl.frontFace(gl.CCW);
 
 	// Model Data
 	const vertices = modelData[0]
@@ -100,12 +142,6 @@ function draw3D(modelData, canvasID)
 		console.error('ERROR compiling fragment shader!', gl.getShaderInfoLog(fragmentShader));
 		return;
 	}
-
-	// Setup canvas
-	gl.clearColor(1.0, 1.0, 1.0, 1.0);
-	gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-	gl.enable(gl.DEPTH_TEST);
-	gl.frontFace(gl.CCW);
 
 	// Program
 	var program = gl.createProgram();
