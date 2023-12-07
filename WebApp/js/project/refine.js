@@ -2,14 +2,24 @@ function position(expr, pattern) {
     var cases = []
     for (let i = 0; i < expr.length; i++) {
         var element = expr[i];
-        if (Array.isArray(pattern)) {
-            if (element == pattern) { cases.push([i])}
+        if (!Array.isArray(pattern)) {
+            if(Array.isArray(element)) {
+                for(let j = 0; j < element.length; j++) {
+                    var el = element[j];
+                    if(equal(el, pattern)) {
+                        cases.push([i])
+                    }
+                }
+            }
+            else if (equal(element, pattern)) { cases.push([i])}
         } else {
-            if (equal(element, pattern)) {cases.push([i])}
+            if (element== pattern) {cases.push([i])}
         }   
     }
     return cases;
 }
+
+
 function refine(mesh, patches) {
     var surface = mesh.getMeshData();
     var verts = surface[0];
