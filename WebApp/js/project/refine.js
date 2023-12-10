@@ -22,12 +22,13 @@ function position(expr, pattern) {
 
 function refine(mesh, patches) {
     var surface = mesh.getMeshData();
-    var verts = surface[0];
-    var faces = surface[1];
+    var area = triangulate(mesh, "AREA");
+    var verts = area[0][0];
+    var faces = area[0][1];
     var holes = mesh.getHoles();
     var adjList = mesh.getAdjList();
     var removeTri, pos, pos2, positions = [];
-    var alpha = 0.2;
+    var alpha = Math.sqrt(2);
     var changed = true;
 
     for (let i = 0; i < holes.length; i++) {
@@ -35,64 +36,65 @@ function refine(mesh, patches) {
         var patch = patches[i];
         var n = hole.length;
         var adjEdges = getAllEdges(surface, hole, adjList);
-        var scale = new Array(hole.length);
-        // For each vertex on hole boundary, compute average length
+        var scale = new Object();
 
-        for (let j = 0; j < hole.length; j++) {
+        // For each vertex on hole boundary, compute average length
+        for (let j = 0; j < n; j++) {
             var x = adjEdges[hole[j]];
-            scale[j] = math.mean(x);
+            scale[hole[j]] = math.mean(x);
         }
 
         while (changed) {
-            var numVerts = verts.length;
             changed = false;
-            for (let i = 0; i < patches.length; i++) {
+            // For every triangle in the patching mesh
+            var length = patch.length;
+
+            for (let i = 0; i < length; i++) {
+                
                 var tri = patch[i];
                 var I = tri[0]; var J = tri[1]; var K = tri[2];
                 var p1 = verts[I]; var p2 = verts[J]; var p3 = verts[K];
 
-                // Compute centroid and corresponding scale
-                var centroid = [(p1[0] + p2[0] + p3[0]) / 3, (p1[1] + p2[1] + p3[1]) / 3, (p1[2] + p2[2] + p3[2]) / 3];
-                var triScale = (scale[adjList[p1].index] + adjList[p2].index + adjList[p3].index) / 3;
-
+                // Compute centroid and scale
+                var centroid =  [(p1[0] + p2[0] + p3[0]) / 3, (p1[1] + p2[1] + p3[1]) / 3, (p1[2] + p2[2] + p3[2]) / 3];
+                var triScale = (scale[verts[adjList[p1].index]] + scale[verts[adjList[p2].index]] + scale[verts[adjList[p3].index]]) / 3;
+                
                 // For m = i, j, k
-                var m = alpha * math.norm(math.subtract(centroid, p1))
-                var replace = true;
-                if (m <= triScale || m <= scale[I]) {
-                    replace = false;
-                }
+                if (alpha * math.norm(math.subtract(centroid, p1)) > triScale && alpha * math.norm(math.subtract(centroid, p1)) > scale[p1]) {
+                    // Add centroid as point
+                    verts.push(centroid)
+                    var c = verts.length - 1;
+                    patch[i] = [c, J, K];
 
-                var m = alpha * math.norm(math.subtract(centroid, p2))
-                if (m <= triScale || m <= scale[J]) {
-                    replace = false;
-                }
+                    // Add two triangles
+                    patch.push([I, c, K])
+                    patch.push([I, J, c])
+                } else if (alpha * math.norm(math.subtract(centroid, p2)) > triScale && alpha * math.norm(math.subtract(centroid, p2)) > scale[p2]) {
+                    // Add centroid as point
+                    verts.push(centroid)
+                    var c = verts.length;
+                    patch[i] = [c, J, K];
 
-                var m = alpha * math.norm(math.subtract(centroid, p3))
-                if (m <= triScale || m <= scale[K]) {
-                    replace = false;
-                }
+                    // Add two triangles
+                    patch.push([I, c, K])
+                    patch.push([I, J, c])
+                } else if (alpha * math.norm(math.subtract(centroid, p3)) > triScale && alpha * math.norm(math.subtract(centroid, p3)) > scale[p3]) {
+                    // Add centroid as point
+                    verts.push(centroid)
+                    var c = verts.length;
+                    patch[i] = [c, J, K];
 
-                if (replace) {
-                    changed = true;
-                    var average = math.mean(scale[I], scale[J], scale[K])
-                    scale.push(average)
-                    verts.push(centroid)   
-                    removeTri.push(i)
-                    m = verts.length;
-                    patch.push([J,K,m])
-                    patch.push([I,K,m])
-                    patch.push(I,J,m)
-                    // positions = [];
-                    // pos2, posTracker = [];
-                    // for (let l = 0; l < positions.length; l++) {
-                    //     pos2.push(patch[positions[J][0]])
-                    //     posTracker.push(positions[J][0])
-                    // }
-                    
+                    // Add two triangles
+                    patch.push([I, c, K])
+                    patch.push([I, J, c])
                 }
             }
         }
     }
+
+    // Combine new patches with existing triangles
+    var newFaces = faces.concat(patches.flat());
+    return [verts, newFaces];
 }
 
 function equal(a1, a2) {
@@ -115,29 +117,33 @@ function getAllEdges(surface, hole, adjList) {
     var numFaces = faces.length;
     for (let i = 0; i < numFaces; i++) {
         var face = faces[i];
-        for (let j = 0; j < hole.length; j++) {
-            var val = hole[j];
-            if (equal(vert[face[0]],val)) {
-                if (!edges.hasOwnProperty(val)) {
-                    edges[val] = [math.distance(vert[face[0]], vert[face[1]]), math.distance(vert[face[0]], vert[face[2]])]
-                } else {
-                    edges[val].push(math.distance(vert[face[0]], vert[face[1]]))
-                    edges[val].push(math.distance(vert[face[0]], vert[face[2]]))
-                }
-            } else if (equal(vert[face[1]],val)) {
-                if (!edges.hasOwnProperty(val)) {
-                    edges[val] = [math.distance(vert[face[0]], vert[face[1]]), math.distance(vert[face[1]], vert[face[2]])]
-                } else {
-                    edges[val].push(math.distance(vert[face[0]], vert[face[1]]))
-                    edges[val].push(math.distance(vert[face[1]], vert[face[2]]))
-                }
-            } else if (equal(vert[face[2]], val)) {
-                if (!edges.hasOwnProperty(val)) {
-                    edges[val] = [math.distance(vert[face[0]], vert[face[2]]), math.distance(vert[face[1]], vert[face[2]])]
-                } else {
-                    edges[val].push(math.distance(vert[face[0]], vert[face[2]]))
-                    edges[val].push(math.distance(vert[face[1]], vert[face[2]]))
-                }
+        if (adjList.hasOwnProperty(vert[face[0]])) {
+            var val = adjList[vert[face[0]]];
+            if (edges[vert[face[0]]] == null) {
+                edges[vert[face[0]]] = [math.distance(vert[face[0]], vert[face[1]]), math.distance(vert[face[0]], vert[face[2]])]
+            } else {
+                edges[vert[face[0]]].push(math.distance(vert[face[0]], vert[face[1]]))
+                edges[vert[face[0]]].push(math.distance(vert[face[0]], vert[face[2]]))
+            }
+        }
+
+        if (adjList.hasOwnProperty(vert[face[1]])) {
+            var val = adjList[vert[face[1]]];
+            if (edges[vert[face[1]]] == null) {
+                edges[vert[face[1]]] = [math.distance(vert[face[0]], vert[face[1]]), math.distance(vert[face[1]], vert[face[2]])]
+            } else {
+                edges[vert[face[1]]].push(math.distance(vert[face[0]], vert[face[1]]))
+                edges[vert[face[1]]].push(math.distance(vert[face[1]], vert[face[2]]))
+            }
+        }
+
+        if (adjList.hasOwnProperty(vert[face[2]])) {
+            var val = adjList[vert[face[2]]];
+            if (edges[vert[face[2]]] == null) {
+                edges[vert[face[2]]] = [math.distance(vert[face[0]], vert[face[2]]), math.distance(vert[face[1]], vert[face[2]])]
+            } else {
+                edges[vert[face[2]]].push(math.distance(vert[face[0]], vert[face[2]]))
+                edges[vert[face[2]]].push(math.distance(vert[face[1]], vert[face[2]]))
             }
         }
     }

@@ -2,36 +2,49 @@
 const scene = new THREE.Scene();
 const scene2 = new THREE.Scene();
 const scene3 = new THREE.Scene();
+const scene4 = new THREE.Scene();
 // Camera
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
 const camera2 = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
 const camera3 = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+const camera4 = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
 camera.position.z = 2;
 camera2.position.z = 2;
 camera3.position.z = 2;
+camera4.position.z = 2;
 // Renderer
 const renderer = new THREE.WebGLRenderer();
 const renderer2 = new THREE.WebGLRenderer();
 const renderer3 = new THREE.WebGLRenderer();
+const renderer4 = new THREE.WebGLRenderer();
+renderer.setPixelRatio(window.devicePixelRatio)
+renderer2.setPixelRatio(window.devicePixelRatio)
+renderer3.setPixelRatio(window.devicePixelRatio)
+renderer4.setPixelRatio(window.devicePixelRatio)
 scene.background = new THREE.Color(0xffffff);
 scene2.background = new THREE.Color(0xffffff);
 scene3.background = new THREE.Color(0xffffff);
+scene4.background = new THREE.Color(0xffffff);
 // Controls
 const controls = new THREE.OrbitControls(camera, renderer.domElement)
 const controls2 = new THREE.OrbitControls(camera2, renderer2.domElement)
-const controls3 = new THREE.OrbitControls(camera2, renderer3.domElement) 
+const controls3 = new THREE.OrbitControls(camera3, renderer3.domElement) 
+const controls4 = new THREE.OrbitControls(camera4, renderer4.domElement) 
 document.getElementById("hole").appendChild(renderer.domElement);
 document.getElementById("tri").appendChild(renderer2.domElement);
 document.getElementById("refine").appendChild(renderer3.domElement);
+document.getElementById("fair").appendChild(renderer4.domElement);
 
 window.addEventListener('resize', onWindowResize, false)
 function onWindowResize() {
     camera.aspect = window.innerWidth / window.innerHeight
     camera2.aspect = window.innerWidth / window.innerHeight
     camera3.aspect = window.innerWidth / window.innerHeight
+    camera4.aspect = window.innerWidth / window.innerHeight
     camera.updateProjectionMatrix()
     camera2.updateProjectionMatrix()
     camera3.updateProjectionMatrix()
+    camera4.updateProjectionMatrix()
     render()
 }
 
@@ -44,6 +57,7 @@ function render() {
     renderer.render(scene, camera)
     renderer2.render(scene2, camera2)
     renderer3.render(scene3, camera3);
+    renderer4.render(scene4, camera4);
 }
 
 animate()
@@ -146,10 +160,12 @@ function toggleMethod() {
     if (methodState) {
         hideObject(scene2, "area")
         showObject(scene2, "angle")
+        document.getElementById("tri-desc").textContent = "Triangulation (Angle)"
         methodState = false;
     } else {
         hideObject(scene2, "angle")
         showObject(scene2, "area")
+        document.getElementById("tri-desc").textContent = "Triangulation (Area)"
         methodState = true;
     }
 }
@@ -170,6 +186,9 @@ function refresh(mesh) {
     }
     while(scene3.children.length > 0){ 
         scene3.remove(scene3.children[0]); 
+    }
+    while(scene4.children.length > 0){ 
+        scene4.remove(scene4.children[0]); 
     }
    
     // Start replacing the scene with new mesh
@@ -204,6 +223,9 @@ function showBunny() {
     }
 
     // Start replacing the scene with new mesh
-    addObject(scene, BUNNY_BASE[0], BUNNY_BASE[1], color=null, "bunny")
-    addObject(scene2, BUNNY_AREA[0], BUNNY_AREA[1], color=null);
+    addObject(scene, BUNNY_BASE[0], BUNNY_BASE[1], color=null)
+    addHoleOutline(scene, BUNNY_HOLES_OUTLINE)
+    addObject(scene2, BUNNY_AREA[0], BUNNY_AREA[1], color=null, "area");
+    addObject(scene2, BUNNY_ANGLE[0], BUNNY_ANGLE[1], color=null, "angle");
+    hideObject(scene2, "angle")
 }
