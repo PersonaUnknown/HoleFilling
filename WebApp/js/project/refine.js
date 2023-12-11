@@ -33,7 +33,6 @@ function refine(mesh, patches) {
     var faces = surface[1];
     var holes = mesh.getHoles();
     var adjList = mesh.getAdjList();
-    var removeTri, pos, pos2, positions = [];
     var alpha = Math.sqrt(2);
     var changed = true;
 

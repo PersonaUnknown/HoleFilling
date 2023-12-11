@@ -208,7 +208,7 @@ function refresh(mesh) {
     var sceneRefine = prepModelForScene(ref);
     addObject(scene3, sceneRefine[0], sceneRefine[1]);
     // Fairing
-    var fair = fairAvg(triArea[0]);
+    var fair = fairAvg(ref);
     var sceneFair = prepModelForScene(fair);
     addObject(scene4, sceneFair[0], sceneFair[1])
 }
