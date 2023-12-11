@@ -78,7 +78,7 @@ function addObject(scene, verts, faces, color = null, name = null) {
     mesh.name = name == null ? "base-model" : name;
 
     if (name != "bunny") {
-        const edges = new THREE.EdgesGeometry( geometry ); 
+        const edges = new THREE.WireframeGeometry( geometry ); 
         const line = new THREE.LineSegments(edges, new THREE.LineBasicMaterial( { color: 0x000000 } ) ); 
         line.name = name == null ? "base-outline" : name + "-outline";
         scene.add(line);

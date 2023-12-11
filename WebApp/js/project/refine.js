@@ -38,6 +38,7 @@ function refine(mesh, patches) {
     var changed = true;
 
     for (let i = 0; i < holes.length; i++) {
+        let removeTri = [];
         var hole = holes[i];
         var patch = patches[i];
         var n = hole.length;
@@ -82,13 +83,18 @@ function refine(mesh, patches) {
                     replace = false;
                 }
                 if (replace) {
-                    
+                    changed=true;
                     verts.push(centroid)
+                    var averageScale = (scale[I] + scale[J] + scale[K])/3;
+                    
+                    
                     let c = verts.length - 1;
-                    patch[j] = [c, J, K];
-
+                    scale[c] = averageScale;
+                    console.log(scale[c])
+                    removeTri.push(j)
                     // Add two triangles
-                    patch.push([I, c, K])
+                    patch.push([J, K, c]);
+                    patch.push([I, K, c])
                     patch.push([I, J, c])
                     
                     // relax edges, relax edge I, J
@@ -110,11 +116,12 @@ function refine(mesh, patches) {
                             changePos = posTracker[pos[k][0]];
                         }
                     }
+                    
                     if(T!=-1 && math.distance(verts[I], verts[J]) > math.distance(centroid,verts[T])){
                         patch[changePos][3 - position(patch[changePos],I)[0] - position(patch[changePos], T)[0]] = c;
-                        patch[patch.length-1][2]=T;
+                        patch[patch.length-1][0]=T;
                     }
-
+                    
                     //relax edge I,K
                     pos = position(pos2, K);
                     changePos = 0;
@@ -127,10 +134,14 @@ function refine(mesh, patches) {
                             changePos = posTracker[pos[k][0]];
                         }
                     }
+                    console.log(patch[changePos])
+                    console.log(patch[patch.length-2])
                     if(T!=-1 && math.distance(verts[I], verts[K]) > math.distance(centroid,verts[T])){
                         patch[changePos][3 - position(patch[changePos],I)[0] - position(patch[changePos], T)[0]] = c;
                         patch[patch.length-2][0]=T;
                     }
+                    console.log(patch[changePos])
+                    console.log(patch[patch.length-2])
 
                     //relax edge J,K
                     positions = position(patch, K)
@@ -153,11 +164,17 @@ function refine(mesh, patches) {
                     }
                     if(T!=-1 && math.distance(verts[J], verts[K]) > math.distance(centroid,verts[T])){
                         patch[changePos][3 - position(patch[changePos],J)[0] - position(patch[changePos], T)[0]] = c;
-                        patch[j][2]=T;
+                        patch[patch.length-3][0]=T;
                     }
                 }
     
             }
+            
+            for(let j = removeTri.length-1; j>=0; j--) {
+                
+                patch.splice(removeTri[j],1);
+            }
+            removeTri = [];
         }
     }
     
