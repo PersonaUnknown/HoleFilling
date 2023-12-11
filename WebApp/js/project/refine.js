@@ -90,7 +90,7 @@ function refine(mesh, patches) {
                     
                     let c = verts.length - 1;
                     scale[c] = averageScale;
-                    console.log(scale[c])
+                    // console.log(scale[c])
                     removeTri.push(j)
                     // Add two triangles
                     patch.push([J, K, c]);
@@ -134,14 +134,14 @@ function refine(mesh, patches) {
                             changePos = posTracker[pos[k][0]];
                         }
                     }
-                    console.log(patch[changePos])
-                    console.log(patch[patch.length-2])
+                    // console.log(patch[changePos])
+                    // console.log(patch[patch.length-2])
                     if(T!=-1 && math.distance(verts[I], verts[K]) > math.distance(centroid,verts[T])){
                         patch[changePos][3 - position(patch[changePos],I)[0] - position(patch[changePos], T)[0]] = c;
                         patch[patch.length-2][0]=T;
                     }
-                    console.log(patch[changePos])
-                    console.log(patch[patch.length-2])
+                    // console.log(patch[changePos])
+                    // console.log(patch[patch.length-2])
 
                     //relax edge J,K
                     positions = position(patch, K)

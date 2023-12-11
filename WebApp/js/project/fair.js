@@ -20,14 +20,7 @@ function fairAvg(surface) {
         }
 
         if (neighbors.length > 0) {
-            var x = 0; var y = 0; var z = 0;
-            for (let k = 0; k < neighbors.length; k++) {
-                x += neighbors[k][0];
-                y += neighbors[k][1];
-                z += neighbors[k][2];
-            }
-            
-            verts[i] = [x / 3, y / 3, z / 3];
+            verts[i] = math.mean(neighbors, 0);
         }
     }
 

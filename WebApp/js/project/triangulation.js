@@ -190,7 +190,7 @@ function triangulate(mesh, method) {
                     var m = i + 1;
                     for (let x = i + 1; x < k; x++)
                     {
-                        adjTris = [[hole[i], hole[O[i][m]], hole[x]], [hole[x], hole[O[m][k]], hole[k]]];
+                        adjTris = [[hole[i], hole[O[i][m]], hole[m]], [hole[m], hole[O[m][k]], hole[k]]];
                         var curr = addWeights(addWeights(W[i][x], W[x][k]), minAngleWeightFuncTwo(hole[i], hole[x], hole[k], adjTris));
                         
                         if (lessThan(curr, min)) {

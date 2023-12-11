@@ -1,3 +1,4 @@
+// For testing purposes (Want website to start blank)
 async function main() {
     // Load model
     var sphereSmall =  new HoleMesh("sphere100hole");    
@@ -23,9 +24,9 @@ async function main() {
     addObject(scene3, sceneRefine[0], sceneRefine[1]);
 
     // Fairing
-    var fair = fairAvg(sphereSmall.getMeshData());
+    var fair = fairAvg(ref);
     var sceneFair = prepModelForScene(fair);
     addObject(scene4, sceneFair[0], sceneFair[1])
 }
 
-main()
+// main()

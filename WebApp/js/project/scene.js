@@ -13,10 +13,10 @@ camera2.position.z = 2;
 camera3.position.z = 2;
 camera4.position.z = 2;
 // Renderer
-const renderer = new THREE.WebGLRenderer();
-const renderer2 = new THREE.WebGLRenderer();
-const renderer3 = new THREE.WebGLRenderer();
-const renderer4 = new THREE.WebGLRenderer();
+const renderer = new THREE.WebGLRenderer({antialias: true, logarithmicDepthBuffer: true});
+const renderer2 = new THREE.WebGLRenderer({antialias: true, logarithmicDepthBuffer: true});
+const renderer3 = new THREE.WebGLRenderer({antialias: true, logarithmicDepthBuffer: true});
+const renderer4 = new THREE.WebGLRenderer({antialias: true, logarithmicDepthBuffer: true});
 renderer.setPixelRatio(window.devicePixelRatio)
 renderer2.setPixelRatio(window.devicePixelRatio)
 renderer3.setPixelRatio(window.devicePixelRatio)
@@ -203,6 +203,14 @@ function refresh(mesh) {
     addObject(scene2, area[0], area[1], color=null, "area");
     addObject(scene2, angle[0], angle[1], color=null, "angle");
     hideObject(scene2, "angle")
+    // Refinement
+    var ref = refine(mesh, triArea[1]);
+    var sceneRefine = prepModelForScene(ref);
+    addObject(scene3, sceneRefine[0], sceneRefine[1]);
+    // Fairing
+    var fair = fairAvg(triArea[0]);
+    var sceneFair = prepModelForScene(fair);
+    addObject(scene4, sceneFair[0], sceneFair[1])
 }
 
 function showBunny() {
@@ -221,11 +229,15 @@ function showBunny() {
     while(scene3.children.length > 0){ 
         scene3.remove(scene3.children[0]); 
     }
-
+    while(scene4.children.length > 0) {
+        scene4.remove(scene4.children[0]);
+    }
     // Start replacing the scene with new mesh
     addObject(scene, BUNNY_BASE[0], BUNNY_BASE[1], color=null)
     addHoleOutline(scene, BUNNY_HOLES_OUTLINE)
     addObject(scene2, BUNNY_AREA[0], BUNNY_AREA[1], color=null, "area");
     addObject(scene2, BUNNY_ANGLE[0], BUNNY_ANGLE[1], color=null, "angle");
     hideObject(scene2, "angle")
+    addObject(scene3, BUNNY_REFINE_ATTEMPT[0], BUNNY_REFINE_ATTEMPT[1])
+    addObject(scene4, BUNNY_FAIR[0], BUNNY_FAIR[1])
 }

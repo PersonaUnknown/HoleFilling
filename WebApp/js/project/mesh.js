@@ -180,8 +180,8 @@ class HoleMesh {
                 var hole = [];
                 var entry = this.adjList[this.vertices[currVert]].adj
                 var prev = currVert;
-                var curr = entry[1];
-                var end = entry[0];
+                var curr = entry[0];
+                var end = entry[1];
                 var connected = this.adjList[this.vertices[curr]].adj;
 
                 // Until you haven't reached the end, keep adding points to hole
